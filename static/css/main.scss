@@ -1,0 +1,103 @@
+$MainColor: #a5bcc9;
+$MarginContainer: 5%;
+
+/* HTML5 selectors */
+body {
+     margin: 0;
+     padding: 0;
+     background: #fefefe
+}
+
+article {
+	color: #000;
+	background-color: $MainColor;
+}
+
+aside {
+	/*
+	color: #fff;
+	background-color: #c0392b
+	*/
+	background-color: #f2f2f2;
+	border: 3px inset $MainColor;
+}
+
+header {
+	height: 100px;
+	padding:1em 0 1em 0;
+	color: #fff;
+	background-color: #3B75CC;
+	margin-bottom:1em;
+	img {
+		width:40px;
+		height:40px;
+		float: left;
+	}
+	h2 {
+		margin-top:5px; 
+		display: inline-block;
+	}
+}
+
+footer {
+	color: #fff;
+	background-color: #16a085;
+	padding: 1em;
+	margin-top: 1em;
+}
+
+small {
+	font-size: 0.8em;
+}
+
+
+
+/*********** Classes **************/
+
+.clear {
+	clear: both;
+	display:block;
+	height: 1em;
+	line-height: 1em;
+}
+
+/**/ 
+.MyContainer {
+		margin: 0 $MarginContainer;
+		padding: 1px;
+}
+
+.ColorGrid {
+	background-color: #d2d2d2;
+}
+
+/* IDs */
+#message_zone {
+	padding-top: 20px;
+	font-style: italic;
+/*	text-align: center; */
+}
+
+/* MEDIA RULES */
+@media screen and (max-width: 600px) {
+	/* Inheritance */
+	%CommonTitles {
+		font-weight: bold;
+	}
+	h1 {
+		@extend %CommonTitles;
+		font-size: 110%;
+	}
+	h2 {
+		@extend %CommonTitles;
+		font-size: 90%;
+	}
+	h3 {
+		@extend %CommonTitles;
+		font-size: 80%;
+	}
+}
+
+
+
+
