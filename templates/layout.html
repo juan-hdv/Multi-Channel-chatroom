@@ -14,17 +14,20 @@
     </head>
     <body>
         <header>
-            <div class="MyContainer">
+            <div class="MyContainer" rol="main">
                 <div class="float-right">
                     {% block user %}
                     {% endblock %}
                 </div>
                 <div>
-                    <img src="{{ url_for('static', filename='img/chatroom.jpg') }}" alt="Flack" >
-                    <h2>&nbsp;&nbsp;FLACK</h2>
+                    <h1>FLACK&nbsp;&nbsp;</h1>
+                    <span style="font-size: 24px"><i class="fa fa-comments fa-2x" alt="Flack"></i></span>
+                    <i class="fa fa-comments fa-1x"></i>
+                    <h2>&nbsp;&nbsp;Chating rooms</h2>
                 </div>
             </div>
         </header>
+
         <div class="MyContainer">
             {% block body %}
             {% endblock %}

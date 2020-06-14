@@ -33,7 +33,7 @@ header {
 		height:40px;
 		float: left;
 	}
-	h2 {
+	h1, h2 {
 		margin-top:5px; 
 		display: inline-block;
 	}
@@ -61,9 +61,8 @@ small {
 	line-height: 1em;
 }
 
-/**/ 
 .MyContainer {
-		margin: 0 $MarginContainer;
+		margin: 0 $MarginContainer; /* Top-Bottom, Right-Left */
 		padding: 1px;
 }
 
@@ -73,10 +72,41 @@ small {
 
 /* IDs */
 #message_zone {
-	padding-top: 20px;
+	margin: 0;
+	padding-top: 0px;
 	font-style: italic;
+    visibility: hidden;
+
+	animation-delay: 200ms;
+    animation-name: a_messageZone;
+    animation-duration: 3000ms;
+    animation-fill-mode: forwards;
 /*	text-align: center; */
 }
+
+/* Attached Images */
+.image-post {
+    max-height: 120px;
+    border: 1px solid gray;
+    margin: 5px;
+    clear: right;
+	display:block;
+	line-height: 120px;
+}
+.image-thumb {
+    height: 32px;
+    border: 1px solid gray;
+    margin: 5px;
+}
+.image-upload {
+	> input {
+    	display: none;
+	}
+	span {
+	    font-size: 16px;
+	    cursor: pointer;
+	}
+}  
 
 /* MEDIA RULES */
 @media screen and (max-width: 600px) {
@@ -98,6 +128,30 @@ small {
 	}
 }
 
+/* ANIMATIONS */ 
 
-
-
+/* MessageZone animation */
+@keyframes a_messageZone {
+  0%{
+    visibility: visible;
+    opacity: 1;
+  }
+  25%{
+    opacity: 1;
+  }
+  50%{
+    opacity: 1;
+    /* transform: rotateX(30deg); */
+  }
+  75%{
+    opacity: 0.2;
+    height: 4.1em;
+    /* transform: rotateX(60deg); */
+  }
+  100%{
+    opacity: 0;
+    height: 0px;
+    visibility: hidden;
+    /* transform: rotateX(90deg); */
+  }
+}
