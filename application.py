@@ -128,6 +128,10 @@ class channelsClass ():
 users = usersClass ()
 channels = channelsClass ()
 
+@app.route ("/t")
+def test():
+	return render_template("test.html")
+
 @app.route ("/")
 def index():
 	return render_template("index.html", users=users.list, channels=channels.toList())
@@ -172,6 +176,8 @@ def on_channelCreate (username, channelName):
 	else:
 		emit('alertMessage',('channelNameNotAvailable','alert-warning',channelName))
 
+'''
+For future use
 @socketio.on ('channelDelete')
 # @param 	channelName {string} - The channel name
 # @return 	channelName {string} - The channel name
@@ -183,6 +189,7 @@ def on_channelDelete (username, channelName):
 		emit('channelDeleted', (username, channelName, channels.toList()), broadcast=True)
 	else: 
 		emit('alertMessage',('channelNameNotExist','alert-danger',channelName))
+'''
 
 # Join a room
 @socketio.on('joinRoom')

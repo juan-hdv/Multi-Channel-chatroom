@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Chat room
+{% endblock %}
+
+{% block head %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='js/attachments.js') }}"></script>
+<script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<div id="message_zone">
+    <div id="message_div" class="alert" role="alert"></div>
+</div>
+
+<!-- 1st section - username LOGIN -->
+<section id="getUserName" class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <h2>Type your username to enter the room</h2>
+        <div class="form-group">
+            <input class="form-control" id="usernameField" name="usernameField" placeholder="Username" size=25 required>
+        </div>
+        <div class="form-group">
+            <button id="loginButton" class="btn btn-primary">Start chating</button>
+        </div>
+    </div>
+</section>
+<!-- End 1st section -->
+
+<!-- 2nd section Channels Operation -->
+<section id="postsList">
+    <div class="row">
+        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+            <aside>
+                <div id="usernameDiv" align="center">
+                    <div><span class="userOnline"><i class="fa fa-circle"></i>&nbsp;</span><span id="usernameText">_</span></div>
+                    <button id="logoutButton" class="btn btn-primary btn-sm">Logout</button>
+                </div>
+
+                <div class="form-group">
+                    <label for="channelSelect">Select a channel</label>
+                    <select id="channelSelect">
+                        <option value="none" selected="">None</option>
+                    </select>
+                </div>
+                <div id='channelForm'>
+                    <div class="form-group">
+                        <input class="form-control" id="channelField" name="channelField" placeholder="Channel name" size=25 required>
+                    </div>
+                    <div class="form-group">
+                        <button id="createChannelButton" class="btn btn-primary">Create Chanel</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button id="deleteChannelButton" class="btn btn-primary">Delete Selected channel</button>
+                </div>
+                <div id='postForm'>
+                    <div class="form-group">
+                        <label for="postMessageField">Post a message</label>
+                        <textarea class="form-control" id="postMessageField" name="postMessageField" placeholder="Message" size=250 required></textarea>
+                    </div>
+
+                    <div class="image-upload">
+                        <label for="files"><span><i class="fa fa-paperclip fa-1x"></i></span></label>
+                        <input id="files" type="file" name="files[]" accept="image/gif, image/jpeg, image/png"> 
+                        <span id="filesClear"><i class="fa fa-unlink fa-1x"></i></span>
+                    </div>
+                    <output id="attachedImage"></output>
+
+                    <div class="form-group">
+                        <button id="postMessageButton" class="btn btn-primary">Post</button>
+                    </div>
+
+                </div>
+            </aside>
+        </div>
+        <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+            <article>
+                <h1><span id="channelName"></span></h1>
+                <br>
+                <div id="posts">
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+{% endblock %}

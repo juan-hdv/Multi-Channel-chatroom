@@ -10,20 +10,13 @@
 <script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}
 
-{% block user %}
-<div id="usernameDiv" align="center">
-    <div>Welcome <strong><span id="usernameText">_</span></strong>!</div>
-    <button id="logoutButton" class="btn btn-primary btn-sm">Logout</button>
-</div>
-{% endblock %}
-
 {% block body %}
 <div id="message_zone">
     <div id="message_div" class="alert" role="alert"></div>
 </div>
 
-<!-- 1st section for getting username -->
-<section id="getUserName" class="row">
+<!-- 1st section - username LOGIN -->
+<section id="getUserNameSection" class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <h2>Type your username to enter the room</h2>
         <div class="form-group">
@@ -36,55 +29,99 @@
 </section>
 <!-- End 1st section -->
 
-<section id="postsList">
-    <div class="row">
-        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-            <aside>
-                <div class="form-group">
-                    <label for="channelSelect">Select a channel</label>
-                    <select id="channelSelect">
-                        <option value="none" selected="">None</option>
-                    </select>
-                </div>
-                <div id='channelForm'>
-                    <div class="form-group">
-                        <input class="form-control" id="channelField" name="channelField" placeholder="Channel name" size=25 required>
-                    </div>
-                    <div class="form-group">
-                        <button id="createChannelButton" class="btn btn-primary">Create Chanel</button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <button id="deleteChannelButton" class="btn btn-primary">Delete Selected channel</button>
-                </div>
-                <div id='postForm'>
-                    <div class="form-group">
-                        <label for="postMessageField">Post a message</label>
-                        <textarea class="form-control" id="postMessageField" name="postMessageField" placeholder="Message" size=250 required></textarea>
-                    </div>
-
-                    <div class="image-upload">
-                        <label for="files"><span><i class="fa fa-paperclip fa-1x"></i></span></label>
-                        <input id="files" type="file" name="files[]" accept="image/gif, image/jpeg, image/png"> 
-                        <span id="filesClear"><i class="fa fa-unlink fa-1x"></i></span>
-                    </div>
-                    <output id="attachedImage"></output>
-
-                    <div class="form-group">
-                        <button id="postMessageButton" class="btn btn-primary">Post</button>
-                    </div>
-
-                </div>
-            </aside>
-        </div>
-        <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
-            <article>
-                <h1><span id="channelName"></span></h1>
+<div id="x" class="row no-gutters">
+    <!-- 2nd section Channels Operation -->
+    <section id="channelsSection" class="col-xs-6 col-sm-5 col-md-4 col-lg-3 col-xl-3">
+        <aside>
+            <div id="usernameDiv">
+                <span class="userOnline" title="Available">
+                    <i class="fa fa-circle"></i>
+                </span>
+                &nbsp;<span id="usernameText">_</span>
                 <br>
-                <div id="posts">
+                <label title="Logout" for="logoutButton">
+                    <span class="classButton">
+                        <i class="fa fa-sign-out fa-1x"></i>
+                        &nbsp;<small>Logout</small>
+                    </span>
+                    <button id="logoutButton" class="btn btn-primary btn-sm" hidden></button>
+                </label>
+            </div>
+            <hr>
+            <div class="form-group">
+                <label title="Select a Channel" for="channelSelect">
+                    <span class="classIcon">
+                        <i class="fa fa-users fa-1x"></i>
+                    </span>
+                </label>
+                &nbsp;
+                <select id="channelSelect">
+                    <option value="none" selected="">None</option>
+                </select>
+            </div>
+            <span id="addNewChannel" class="classButton" title="Add a new channel">
+                <i class="fa fa-plus fa-1x"></i>
+                &nbsp;<small>Add new channel</small>
+            </span>
+            <div id='channelForm'>
+                <div class="input-group">
+                    <input class="form-control width100" id="channelField" name="channelField" placeholder="Channel name" size=25 required>
+                    <span class="input-group-btn">
+                        &nbsp;<button id="createChannelButton" class="btn btn-primary">Create</button>
+                    </span>
                 </div>
-            </article>
+            </div>
+            <hr>
+            <!-- for future use
+            <div class="form-group">
+                <button id="deleteChannelButton" class="btn btn-primary">Delete Selected channel</button>
+            </div>
+            -->
+        </aside>    
+    </section>
+    <!-- End 2nd -->
+
+    <!-- 3rd section Posts Secction -->
+    <section id="postsSection" class="col-xs-6 col-sm-7 col-md-8 col-lg-9 col-xl-9">
+        <!-- List of Posts -->
+        <article>
+            <h3><span id="channelName"></span></h3>
+            <br>
+            <div id="posts">
+            </div>
+        </article>
+
+        <!-- Post input, buttons and attachments -->
+        <div id='postForm'>
+            <div class="input-group">
+                <div id="attachedImage"></div>&nbsp;
+
+                <textarea class="form-control" id="postMessageField" name="postMessageField" placeholder="This is my message" size=250 required></textarea>
+                &nbsp;
+                <label title="Post" for="postMessageButton">
+                    <span class="classButton">
+                        <i class="fa fa-share-square fa-2x"></i>
+                    </span>
+                    <button id="postMessageButton" class="btn btn-primary" hidden></button>
+                </label>
+            </div>
+            <div class="image-upload">
+                <small>250 characters&nbsp;&nbsp;&nbsp;-</small>&nbsp;&nbsp;
+                <label for="files">
+                    <span title="Attach image">
+                        <i class="fa fa-paperclip fa-1x"></i>
+                        <input id="files" type="file" name="files[]" accept="image/gif, image/jpeg, image/png" hidden> 
+                        <small>Attach image</small>&nbsp;&nbsp;
+                    </span>
+                </label>
+                <span id="filesClear" title="Detach image">
+                    <i class="fa fa-unlink fa-1x"></i>
+                    <small>Detach image</small>
+                </span>
+            </div>
         </div>
-    </div>
-</section>
+    </section>    
+    <!-- End 3rd section -->
+</div>
+<!-- End row -->
 {% endblock %}

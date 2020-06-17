@@ -1,4 +1,12 @@
 // * * * * General use functions 
+function keyEvents (event) {
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click to "selectorParam"
+    document.getElementById(event.currentTarget.selectorParam).click();
+  }
+} // End keyEvents
 
 /** Convert a string to CamelCase, deleting spaces */
 function camelize(str) {
@@ -65,18 +73,18 @@ function userHtmlRefresh (username) {
 } // end userHtmlRefresh
 
 /** 
- * Change visibility of the 2 main sections "section#getUserName" (top) and section#postsList (bottom)
+ * Change visibility of the 2 main sections "section#getUserNameSection" (top) and section#postsList (bottom)
  * @param {bool} boolS1 - Section1 (section#getUserName) Visibility flag
  * @param {bool} boolS2 - Section2 (section#postsList) Visibility flag
  */
 function userHtmlSectionsVisibility (boolS1,boolS2) {
     // Section for getting user name
-    document.querySelector('section#getUserName').style.display = (boolS1?'block':'none');
+    document.querySelector('#getUserNameSection').style.display = (boolS1?'block':'none');
     document.querySelector('#usernameDiv').style.visibility = (boolS1?'hidden':'visible');
    
-    // Section for posting messages
-    document.querySelector('section#postsList').style.display = (boolS2?'block':'none');
-
+    // Section for channels and post messages
+    document.querySelector('#channelsSection').style.display = (boolS2?'block':'none');
+    document.querySelector('#postsSection').style.display = (boolS2?'block':'none');
 } // ENd userHtmlSectionsVisibility
 
 
@@ -114,7 +122,7 @@ function channelsHtmlRefresh (channelsList, currentChannel) {
     channelsList.forEach (item => { 
         let opt = document.createElement("option");
         opt.value = item;
-        opt.text = item;
+        opt.text = "#"+item;
         opt.selected = item == currentChannel?true:false ;
         sel.add(opt, null);
     });
@@ -126,10 +134,10 @@ function channelsHtmlRefresh (channelsList, currentChannel) {
 
 // * * * * POSTS Functions
 // Refresh html page with posts list
-function postsHtmlRefresh (channelName, postsList) {
+function postsHtmlRefresh (currentUsername, channelName, postsList) {
     document.querySelector('#posts').innerHTML = ''
     if (channelName != '')
-        postsList.forEach ( p => { postsHtmlPrintMessage (channelName, p) });
+        postsList.forEach ( p => { postsHtmlPrintMessage (currentUsername, channelName, p) });
 } // End postsHtmlRefresh
 
 /**
@@ -137,16 +145,22 @@ function postsHtmlRefresh (channelName, postsList) {
  * @parameter {string} channelName  - The current chanelname
  * @parameter {string} postObj      - The message to post {id:,timestampo:,username:,msg:}
  */
-function postsHtmlPrintMessage (channelName, postObj) {
+function postsHtmlPrintMessage (currentUsername, channelName, postObj) {
     let postList = document.querySelector('#posts')
     const post = document.createElement('div');
-    post.id = postObj.id;
-    post.className = 'post';
-    if (postObj.id != '') // postObj.timestamp also == ''
-        post.innerHTML = `<small>${postObj.timestamp}</small> - ${postObj.username}&nbsp;&nbsp;${postObj.msg}`;
-    else
-        post.innerHTML = postObj.msg;
+    if (postObj.id === '') { // It is not a post but a notification of leaving or entering room
+        post.className = 'left-aligned';
+        post.innerHTML = `<div class="postman"><small><em>${postObj.msg} - ${postObj.timestamp}</em></small></div>`;
+    } else {
+        let postmanClass = (currentUsername === postObj.username?'currentUserPost':'otherUserPost');
+        let postmanContent = `<small><strong>${postObj.username}</strong> - ${postObj.timestamp}</small>`;
+        post.id = postObj.id;
+        post.className = (currentUsername === postObj.username?'rigth-aligned':'left-aligned');
+        post.innerHTML = `<div class="${postmanClass}">${postObj.msg}</div><div class="postman">${postmanContent}</div`;
+    }
     document.querySelector('#posts').append(post);
+    e = document.querySelector('article');
+    e.scrollTop = e.scrollHeight;
 } // ENd postsHtmlPrintMessage
 
 
@@ -183,6 +197,11 @@ function load () {
         socket.emit('userLog', $currentUsername, false);
     }
 
+    /** ADD A CHANNEL:- Click button show create channel form */
+     document.querySelector('#addNewChannel').onclick = () => {
+        vis = document.querySelector('#channelForm').getAttribute('class');
+        document.querySelector('#channelForm').setAttribute('class',vis === 'visible'?'hidden':'visible');
+   }
     /** CREATE A CHANNEL:- Click button to CREATE non existing CHANNEL */
     document.querySelector('#createChannelButton').onclick = () => {
         let chan = document.querySelector('#channelField').value;
@@ -191,11 +210,13 @@ function load () {
             alertMessage ("Channel name required. Please type a channel name.","alert-warning");
         else    
             socket.emit ('channelCreate',$currentUsername, chan);
-        // Clear imput field
+        // Clear channel imput field
         document.querySelector('#channelField').value = '';
+        document.querySelector('#channelForm').setAttribute('class','hidden');
     } // End ('#createChannelButton').onclick 
 
-    /** DELETE CHANNEL:- Click button to DELETE existing CHANNEL */
+    /** For fure use
+        DELETE CHANNEL:- Click button to DELETE existing CHANNEL 
     document.querySelector('#deleteChannelButton').onclick = () => {
         let  chan = document.querySelector('select#channelSelect').value;
         if (chan == 0) // "None" entry
@@ -203,18 +224,22 @@ function load () {
         else
             socket.emit ('channelDelete',$currentUsername, chan);
     } // End ('#deleteChannelButton').onclick 
+    */
 
     /** SELECT/CHANGE CHANNEL or ROOM:- Change Selector to SELECT a CHANNEL */
     document.querySelector('select#channelSelect').onchange =function () {
-        let cTitle = this.value == 0?'No room active':this.value;
-        document.querySelector('span#channelName').innerHTML = cTitle;
+        let cTitle = this.value == 0?'No room active':"Channel #"+this.value;
+        document.querySelector('#channelName').innerHTML = cTitle;
         if ($currentChannelName != '')
             socket.emit('leaveRoom',$currentUsername, $currentChannelName);
         $currentChannelName = this.value == 0?'':this.value;
         if ($currentChannelName != '')
             socket.emit('joinRoom',$currentUsername, $currentChannelName);
-        else 
-            postsHtmlRefresh ('', []); // Clear post for No channel
+        else {
+            // Clear post whene No channel selected - "No room active"
+            postsHtmlRefresh ('','', []);
+            document.querySelector('#postForm').setAttribute('class','hidden')
+        }
     } // End ('select#channelSelect').onchange
 
     /** POST MESSAGE:- Click button to POST a Message */
@@ -229,10 +254,14 @@ function load () {
             // Clear attachments from post form
             $attachedImage = '';
             document.querySelector('#attachedImage').innerHTML = '';
-        }
+            document.querySelector('#attachedImage').setAttribute("class",'hidden');
+       }
         document.querySelector('#postMessageField').value = '';
     } // End ('#postMessageButton').onclick
-
+    // Set key event for posting 
+    sel = document.querySelector('#postMessageField');
+    sel.addEventListener("keyup", keyEvents, false);
+    sel.selectorParam = 'postMessageButton';
 
     // * * * SOCKET EVENTS received from flask Server
 
@@ -252,7 +281,7 @@ function load () {
         let u = 'Someone >' + $currentUsername + "in channel>" + $currentChannelName;
         let msg = `${u} has leaved the room.`;
         let postObj = {'id':'', 'timestamp':'', 'username':u, 'msg':msg};
-        postsHtmlPrintMessage ($currentChannelName, postObj);
+        postsHtmlPrintMessage ($currentUsername, $currentChannelName, postObj);
     });
 
     // USER LOGGED:- If login=True, username has loggedin, otherwise username has loggedout
@@ -264,13 +293,13 @@ function load () {
         userHtmlRefresh ($currentUsername);
     });
 
-    // CHANNEL CREATED AND DELETED:- Serves channelCreated and channelDeleted
+    // CHANNEL CREATED :- Serves channelCreated [and channelDeleted]
     function channelOperation (username, channelName, channelList, operation) {
         $cChannel = '';
         if (operation == 'created')
             $cChannel = channelName;
         else if (operation == 'deleted')
-            $cChannel = '';
+            $cChannel = ''; // Currently not in use
         if (username == $currentUsername) {
             $currentChannelName = $cChannel; 
             saveLocalChannelName($currentChannelName);
@@ -282,32 +311,42 @@ function load () {
     socket.on ('channelCreated', (username, channelName, channelList) => { 
         channelOperation (username, channelName, channelList, 'created');
     });
+    /* Not in use
     // When Channel name is deleted 
     socket.on ('channelDeleted', (username, channelName,channelList) => { 
         channelOperation (username, channelName, channelList, 'deleted');
     });
+    */
 
-    // HANDLE LIVE AN JOIN Channel
+    // HANDLE LEAVE AN JOIN Channel
     // @parameter {string} username - The username
     // @parameter {string} channelName - The channel name where the user did the operation (entered o leaved)
     // @parameter {string} operation - The last tense of the user action: 'Entered' or 'Leaved' (the room)
     // @parameter {string} postList - List of posts
     socket.on ('actOnRoom', (username, channelName, act, postsList) => {
         // postObj {id:,timestamp:,username:,msg:}
-        let msg = `${username} has ${act} the room.`;
-        let postObj = {'id':'', 'timestamp':'', 'username':username, 'msg':msg};
-        if (username == $currentUsername)
+        let msg = `${username} ${act} the room.`;
+        let postObj = {'id':'', 'timestamp':new Date().toLocaleString(), 'username':username, 'msg':msg};
+        if (username == $currentUsername) {
+            if (act === 'entered') {
+                $currentChannelName = channelName;
+                // Save the current channel in local storage
+                saveLocalChannelName($currentChannelName);
+            }
             // Refresh posts on current channel
-            postsHtmlRefresh (channelName, postsList);
-        else 
+            postsHtmlRefresh ($currentUsername, channelName, postsList);
+        } else {
             // Print "has entered/leaved"
-            postsHtmlPrintMessage (channelName, postObj);
+            postsHtmlPrintMessage ($currentUsername, channelName, postObj);
+        }
+        // Enable the post form for impunt and send the message to the room
+        document.querySelector('#postForm').setAttribute('class','visible')
     });
 
     /** When Receibing a broadcast message from Server to display */
     socket.on ('messagePosted', (channelName, postObj) => {
         // Print message in page
-        postsHtmlPrintMessage (channelName, postObj);
+        postsHtmlPrintMessage ($currentUsername, channelName, postObj);
     });
 
     /** MESSAGE POSTED:- When Receiving an error message from Server to display */
@@ -324,7 +363,7 @@ function load () {
     // Event listener for file load attachments. Produce => $imgContent
     $attachedImage = '';
     document.getElementById('files').addEventListener('change', handleFilesSelect, false);        
-    document.getElementById('filesClear').addEventListener('click', handleFilesClear, false);        
+    document.getElementById('filesClear').addEventListener('click', handleFilesClear, false);
 
     // Get the current user logged from local storage, otherwise ''
     $currentUsername = loadLocalUsername();

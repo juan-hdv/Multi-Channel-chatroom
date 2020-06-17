@@ -1,27 +1,24 @@
 /* HTML5 selectors */
-body {
-  margin: 0;
+#channelsSection {
+  border: 3px solid green;
+  max-height: 80vh; }
+
+#postsSection {
+  border: 3px solid yellow;
+  max-height: 80vh; }
+
+html, body {
   padding: 0;
-  background: #fefefe; }
+  margin: 0; }
 
-article {
-  color: #000;
-  background-color: #a5bcc9; }
-
-aside {
-  /*
-  color: #fff;
-  background-color: #c0392b
-  */
-  background-color: #f2f2f2;
-  border: 3px inset #a5bcc9; }
+body {
+  background-color: #fefefe; }
 
 header {
   height: 100px;
-  padding: 1em 0 1em 0;
-  color: #fff;
-  background-color: #3B75CC;
-  margin-bottom: 1em; }
+  margin-bottom: 0.5em;
+  padding: 1em;
+  color: #fff; }
   header img {
     width: 40px;
     height: 40px;
@@ -32,29 +29,116 @@ header {
 
 footer {
   color: #fff;
-  background-color: #16a085;
   padding: 1em;
-  margin-top: 1em; }
+  margin-top: 0.5em; }
+
+.MyContainer {
+  margin: 0 0.5em;
+  /* Top-Bottom, Right-Left */
+  padding: 1px; }
 
 small {
-  font-size: 0.8em; }
+  font-size: 0.7em; }
 
-/*********** Classes **************/
 .clear {
   clear: both;
   display: block;
   height: 1em;
   line-height: 1em; }
 
-.MyContainer {
-  margin: 0 5%;
-  /* Top-Bottom, Right-Left */
-  padding: 1px; }
+.hidden {
+  animation-name: a_hidden;
+  animation-duration: 1s;
+  animation-fill-mode: forwards; }
 
-.ColorGrid {
-  background-color: #d2d2d2; }
+.visible {
+  animation-name: a_visible;
+  animation-duration: 1s;
+  animation-fill-mode: forwards; }
 
-/* IDs */
+article {
+  /*
+  WHERE POST LISTS ARE DISPLAYED
+  @extend %silver-200bk;
+  @extend %peter-river-50bk;
+  */
+  height: 64vh;
+  padding: 1em;
+  margin-left: 0.5em;
+  margin-right: 0;
+  border: 1px solid #a5bcc9;
+  display: block;
+  overflow-y: scroll; }
+
+.currentUserPost, .otherUserPost {
+  border-radius: 25px;
+  padding: 0.5em 1em;
+  margin: 0;
+  vertical-align: middle; }
+
+.otherUserPost {
+  background-color: white; }
+
+.left-aligned, .rigth-aligned {
+  width: 50%;
+  display: block;
+  clear: both; }
+  .left-aligned .postman, .rigth-aligned .postman {
+    line-height: 0.7em;
+    padding: 0 0 1em 18px; }
+
+.left-aligned {
+  float: left; }
+
+.rigth-aligned {
+  float: right; }
+
+#postForm {
+  height: 150px;
+  padding: 0.5em 0.5em 0 0.5em;
+  margin: 0 0 0 0.5em;
+  border: 1px solid #a5bcc9; }
+
+/* Attached Images */
+#attachedImage {
+  visibility: hidden;
+  margin: 0 3px 0 0;
+  max-height: 40px;
+  max-width: 40px; }
+
+#attachedImage.hidden, #attachedImage.visible {
+  /* 2.5em;*/ }
+
+.image-post {
+  max-height: 120px;
+  border: 1px solid #a5bcc9;
+  margin: 5px;
+  clear: right;
+  display: block;
+  line-height: 120px; }
+
+.image-thumb {
+  height: 32px;
+  border: 1px solid #a5bcc9;
+  margin: 5px; }
+
+.image-upload {
+  margin-top: 3px; }
+  .image-upload span {
+    font-size: 16px;
+    cursor: pointer; }
+
+.userOnline {
+  color: #67c865;
+  font-size: 1.1em; }
+
+.classButton {
+  font-size: 1.1em;
+  cursor: pointer; }
+
+.classIcon {
+  font-size: 1.1em; }
+
 #message_zone {
   margin: 0;
   padding-top: 0px;
@@ -66,25 +150,21 @@ small {
   animation-fill-mode: forwards;
   /*	text-align: center; */ }
 
-/* Attached Images */
-.image-post {
-  max-height: 120px;
-  border: 1px solid gray;
-  margin: 5px;
-  clear: right;
-  display: block;
-  line-height: 120px; }
+aside {
+  height: calc($postboardHeight + $postFormHeight);
+  padding: 1em;
+  color: #fff;
+  border: 1px solid #a5bcc9; }
 
-.image-thumb {
-  height: 32px;
-  border: 1px solid gray;
-  margin: 5px; }
+#channelSelect {
+  display: inline;
+  width: calc(100% - 2*1.1em); }
 
-.image-upload > input {
-  display: none; }
-.image-upload span {
-  font-size: 16px;
-  cursor: pointer; }
+#channelsSection hr {
+  border-top: 1px solid silver; }
+
+#channelForm {
+  visibility: hidden; }
 
 /* MEDIA RULES */
 @media screen and (max-width: 600px) {
@@ -120,5 +200,122 @@ small {
     height: 0px;
     visibility: hidden;
     /* transform: rotateX(90deg); */ } }
+/* General animations */
+@keyframes a_hidden {
+  0% {
+    opacity: 1;
+    height: 100px; }
+  100% {
+    opacity: 0;
+    height: 0px;
+    visibility: hidden; } }
+@keyframes a_visible {
+  0% {
+    opacity: 0;
+    height: 0px; }
+  100% {
+    height: 100px;
+    opacity: 1; } }
+/*  Flat color palette (full) downloaded from
+ *  http://htmlcolorcodes.com/color-charts/
+ *
+ *  Check out our powerful color picker
+ *  http://htmlcolorcodes.com/color-picker/
+ *
+ *  Want to learn more about colors in SCSS?
+ *  http://htmlcolorcodes.com/tutorials/
+ *
+ *  - - - - - - - - - - - - - - - - - - 
+ *  Credits:
+ *
+ *  Original color palette by
+ *  http://designmodo.github.io/Flat-UI/
+ *
+  */
+/* Turquoise */
+.currentUserPost {
+  background-color: #a3e4d7; }
+
+footer {
+  background-color: #1abc9c; }
+
+/* Peter River */
+.peter-river {
+  color: #3498db; }
+
+article {
+  background-color: #d6eaf8; }
+
+.peter-river-300 {
+  color: #85c1e9; }
+
+.peter-river-400 {
+  color: #5dade2; }
+
+.peter-river-600 {
+  color: #2e86c1; }
+
+aside {
+  background-color: #2874a6; }
+
+#postForm i {
+  color: #2874a6; }
+
+.peter-river-800 {
+  color: #21618c; }
+
+header {
+  background-color: #1b4f72; }
+
+/* Sunflower */
+.classButton, .classIcon {
+  color: #f1c40f; }
+
+.sunflower-50 {
+  color: #fef9e7; }
+
+.sunflower-100 {
+  color: #fcf3cf; }
+
+.sunflower-200 {
+  color: #f9e79f; }
+
+.sunflower-300 {
+  color: #f7dc6f; }
+
+.sunflower-400 {
+  color: #f4d03f; }
+
+.sunflower-500 {
+  color: #f1c40f; }
+
+.sunflower-600 {
+  color: #d4ac0d; }
+
+.sunflower-700 {
+  color: #b7950b; }
+
+.sunflower-900 {
+  color: #7d6608; }
+
+/* Silver */
+.silver-400 {
+  color: #cacfd2; }
+
+.silver-500 {
+  color: #bdc3c7; }
+
+.silver-600 {
+  color: #a6acaf; }
+
+.silver-700 {
+  color: #909497; }
+
+.silver-800 {
+  color: #797d7f; }
+
+/*  Want more? Check our our other color palettes at
+ *  http://htmlcolorcodes.com/color-charts/
+ */
 
 /*# sourceMappingURL=main.css.map */
