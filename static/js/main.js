@@ -89,7 +89,8 @@ function userHtmlSectionsVisibility (boolS1,boolS2) {
 
 
 // * * * * CHANNEL Functions
-var currentChannel = '';
+var $MaxPostsPerChannel = 10; // Defaul Value - The current value will be requested to the server
+var $currentChannelName = '';
 // Get current channel from local storage
 function loadLocalChannelName () {
     let c = localStorage.getItem('chanelName'); 
@@ -143,12 +144,12 @@ function postsHtmlRefresh (currentUsername, channelName, postsList) {
 /**
  * Display post in page (html)
  * @parameter {string} channelName  - The current chanelname
- * @parameter {string} postObj      - The message to post {id:,timestampo:,username:,msg:}
+ * @parameter {string} postObj      - The message to post {id:x,timestamp:y,username:z,msg:w,listsize:0}
  */
-function postsHtmlPrintMessage (currentUsername, channelName, postObj) {
+function postsHtmlPrintMessage (currentUsername, channelName, postObj, postListSize) {
     let postList = document.querySelector('#posts')
     const post = document.createElement('div');
-    if (postObj.id === '') { // It is not a post but a notification of leaving or entering room
+    if (postObj.id === '') { // It's not a post but a notification of leaving or entering room
         post.className = 'left-aligned';
         post.innerHTML = `<div class="postman"><small><em>${postObj.msg} - ${postObj.timestamp}</em></small></div>`;
     } else {
@@ -159,10 +160,18 @@ function postsHtmlPrintMessage (currentUsername, channelName, postObj) {
         post.innerHTML = `<div class="${postmanClass}">${postObj.msg}</div><div class="postman">${postmanContent}</div`;
     }
     document.querySelector('#posts').append(post);
+
+    // If number of posts > $MaxPostsPerChannel => Remove firstchid (div) of #posts
+    let e = null;
+    if (parseInt(postObj.id) > $MaxPostsPerChannel && postListSize == $MaxPostsPerChannel) {
+        e = document.querySelector('#posts');
+        e.removeChild(e.getElementsByTagName('div')[0]);
+    }
+
+    // Scroll to las element
     e = document.querySelector('article');
     e.scrollTop = e.scrollHeight;
-} // ENd postsHtmlPrintMessage
-
+} // End postsHtmlPrintMessage
 
 /** * * * * GENERAL CONTROL EVENTS 
 
@@ -214,6 +223,10 @@ function load () {
         document.querySelector('#channelField').value = '';
         document.querySelector('#channelForm').setAttribute('class','hidden');
     } // End ('#createChannelButton').onclick 
+    // Set key event for posting 
+    sel = document.querySelector('#channelField');
+    sel.addEventListener("keyup", keyEvents, false);
+    sel.selectorParam = 'createChannelButton';
 
     /** For fure use
         DELETE CHANNEL:- Click button to DELETE existing CHANNEL 
@@ -228,7 +241,7 @@ function load () {
 
     /** SELECT/CHANGE CHANNEL or ROOM:- Change Selector to SELECT a CHANNEL */
     document.querySelector('select#channelSelect').onchange =function () {
-        let cTitle = this.value == 0?'No room active':"Channel #"+this.value;
+        let cTitle = this.value == 0?'No active room.':"Channel #"+this.value;
         document.querySelector('#channelName').innerHTML = cTitle;
         if ($currentChannelName != '')
             socket.emit('leaveRoom',$currentUsername, $currentChannelName);
@@ -244,7 +257,7 @@ function load () {
 
     /** POST MESSAGE:- Click button to POST a Message */
     document.querySelector('#postMessageButton').onclick = () => {
-        let msg = document.querySelector('#postMessageField').value;
+        let msg = document.querySelector('#postMessageField').value.trim();
         if (!msg && !$attachedImage) {
             alertMessage ("Nothing to post.","alert-warning");
         } else {
@@ -256,7 +269,7 @@ function load () {
             document.querySelector('#attachedImage').innerHTML = '';
             document.querySelector('#attachedImage').setAttribute("class",'hidden');
        }
-        document.querySelector('#postMessageField').value = '';
+       document.querySelector('#postMessageField').value = '';
     } // End ('#postMessageButton').onclick
     // Set key event for posting 
     sel = document.querySelector('#postMessageField');
@@ -344,9 +357,15 @@ function load () {
     });
 
     /** When Receibing a broadcast message from Server to display */
-    socket.on ('messagePosted', (channelName, postObj) => {
+    socket.on ('messagePosted', (channelName, postObj, postListSize) => {
         // Print message in page
-        postsHtmlPrintMessage ($currentUsername, channelName, postObj);
+        postsHtmlPrintMessage ($currentUsername, channelName, postObj, postListSize);
+    });
+
+    /** Get the max nunmber of post per chanel */
+    socket.on ('maxPostsPerChannelReturned', (maxPosts) => {
+        // Print message in page
+        $MaxPostsPerChannel = maxPosts;
     });
 
     /** MESSAGE POSTED:- When Receiving an error message from Server to display */
@@ -359,6 +378,9 @@ function load () {
         else if (messageCode == 'channelNameNotExist')
             alertMessage (`Channel name does not exist: ${variable}. Please select an existing chanel.`,messageType);
     });
+
+    // Request from server the max number of posts per channel
+    socket.emit('getMaxPosts');
 
     // Event listener for file load attachments. Produce => $imgContent
     $attachedImage = '';

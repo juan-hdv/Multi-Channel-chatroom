@@ -5,15 +5,10 @@ $IconButtonsSize: 1.1em;
 $tall: 100px;
 $borderRadius: 25px;
 $smallSize:0.7em;
-$postboardHeight: 64vh; // vh = Visual Height = Screen res 82
+$postboardHeight: 65vh; // vh = Visual Height = Screen res 82
 $postFormHeight: 150px;  
 
 /* HTML5 selectors */
-
-#channelsSection,
-#postsSection {
-	max-height: 80vh;
-}
 
 html, body {
 	padding:0;
@@ -40,9 +35,11 @@ header {
 }
 footer {
 	@extend %turquoise-500bk;
+	width: 100%;
+	height: 60px;
 	color: #fff;
 	padding: 1em;
-	margin-top: $MarginZones;
+	margin-top: 50px;
 }
 
 .MyContainer {

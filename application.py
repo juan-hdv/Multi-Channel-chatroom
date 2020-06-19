@@ -9,6 +9,14 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
+#   ERROR HANDLERS
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('http_error404.html'), 404
+
+app.register_error_handler(404, page_not_found)
+#########################
+
 
 # CLASSES 
 # *  usersClass 
@@ -46,6 +54,9 @@ class postsClass():
 
     def __init__ (self):
         self.posts =  deque([])
+        # Consecutive for the ID
+        self.consec = 0
+        # Num elements
         self.count = 0
 
     # Last post (more recent post)
@@ -61,15 +72,17 @@ class postsClass():
     # @return post {msg:<message>,timestamp:<tstamp>, username:<username>}
     
     def add (self, username, msg):
+        self.consec += 1
         self.count += 1
-        pst = { 'id': self.count,
+        pst = { 'id': self.consec,
         		'msg': msg, 
-                'timestamp': datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), 
+                'timestamp': datetime.now().strftime("%d/%m/%Y, %H:%M:%S"), 
                 'username': username }
         self.posts.append(pst)
-        # Only 100 post are keeped
-        if (self.count > 100):
+        # Only MaxPostsPerChannel post are keeped
+        if (self.count > MaxPostsPerChannel):
             self.posts.popleft() # Delete first element
+            self.count -= 1
         return pst
 
     # Delete a message in post list
@@ -123,14 +136,20 @@ class channelsClass ():
     def postsList(self,cName):
     	return list(self.dict[cName].posts)
 
+    def postsListSize(self,cName):
+    	return self.dict[cName].count
 # End class channelsList
 
+# Global Variables
+MaxPostsPerChannel = 100
 users = usersClass ()
 channels = channelsClass ()
 
+'''
 @app.route ("/t")
 def test():
 	return render_template("test.html")
+'''
 
 @app.route ("/")
 def index():
@@ -209,9 +228,13 @@ def on_leave (username, channelName):
 # @param 	msg {string} - The message posted
 def on_submitPost (username, channelName, msg):
 	postObj = channels.addPost(channelName, username, msg)
-	# print (f"ID:{postObj['id']}, T:{postObj['timestamp']}, USR:{postObj['username']}, MSG:{postObj['msg']}")
-	emit ('messagePosted',(channelName, postObj), room=channelName)
+	emit ('messagePosted',(channelName, postObj, channels.postsListSize(channelName)), room=channelName)
 
+# Send the constant: Max Post Per Channel
+@socketio.on ("getMaxPosts")
+def on_getMaxPosts ():
+	emit ('maxPostsPerChannelReturned',MaxPostsPerChannel)
+	
 
 if __name__ == '__main__':
     socketio.run(app)
