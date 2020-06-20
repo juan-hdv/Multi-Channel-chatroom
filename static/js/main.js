@@ -228,7 +228,7 @@ function load () {
     sel.addEventListener("keyup", keyEvents, false);
     sel.selectorParam = 'createChannelButton';
 
-    /** For fure use
+    /** For future use
         DELETE CHANNEL:- Click button to DELETE existing CHANNEL 
     document.querySelector('#deleteChannelButton').onclick = () => {
         let  chan = document.querySelector('select#channelSelect').value;

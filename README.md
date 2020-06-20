@@ -1,68 +1,55 @@
-# PROJECT 2: Flack
+# PROJECT 2: Flack - JavaScript and Frontends
 
-**Author:** 			Juan Gabriel Mejía
+### Author/Date
 
-**Date (yyyy-mm-dd):**	2020-05-25
+      Juan Gabriel MEJÍA / 2020-06-19
 
-JavaScript & Frontends
+## INTRODUCTION
+### Description
+This project is aimed to develop a chatroom with multiple channels. The persons, in different locations, can talk in a room in real time.
+
+The involved techonologies include: Python, Flask, Flask-IOSocket, JavaScript (ECMAScript 6 - ES6), HTML5 and CSS3.
+
+### Academic Objectives of HarvardX: CS50W
+* Learn to use JavaScript to run code server-side.
+* Become more comfortable with building web user interfaces.
+* Gain experience with Socket.IO to communicate between clients and servers.
 
 include a short writeup describing your project, what’s contained in each file, and (optionally) any other additional information the staff should know about your project. Also, include a description of your personal touch and what you chose to add to the project.
 
-Objectives
-Learn to use JavaScript to run code server-side.
-Become more comfortable with building web user interfaces.
-Gain experience with Socket.IO to communicate between clients and servers.
-
-# PROJECT 2 - Web Programming with Python and JavaScript
-
-
-
-## Environment Variables
-
+## PROJECT DETAILS
+### Environment Variables
  Before running this project, some environment variables must be set.
- For Ubuntu, set the following variables in ~/.profile ()
+
+ **Set variables**: For Ubuntu, set the following variables in ~/.profile ()
 
  	# Python development variables
 	export FLASK_APP="application.py"
 	export FLASK_DEBUG=1
 	export FLASK_ENV="development"
-	export DATABASE_URL='postgres://svvoceyhxqbdas:b7e1045e4df54f881134a71338ce3f0d62508ae2c2fd43155689dbb219ac747b@ec2-18-233-137-77.compute-1.amazonaws.com:5432/d2lj9lb32ova47'
 
+**Create an Enviroment**: Before running this project, an Environment must be set for Python 3 and requirements.txt must be then installed. To do so, follow this steps:
 
-## Create an Enviroment 
-
- Before running this project, an Environment must be set for Python 3 and requirements.txt must be then installed
-
- To do so, follow this steps:
 	python3 -m venv my-project-env
 	source my-project-env/bin/activate
 	pip install requests
 
-## Project files and description
+### Project files
 
-* db_ultils/
-  * db_create.sql:  SQL for creating the databse schema. Three tables: books, users and reviews, being reviews a relationship between users and books. 
-  * import.py:      Import into your PostgreSQL database all the books from the file 'books.csv'
 * static/
   * css/
-    * main.css: 	the particular styles for the projects. It is generated from main.scss
-    * main.scss     a Sass file corresponding to the main.css
-  * img/
-  	* book-half.svg:a Scalable Vector Graphics (svg) for the site logo.
+    * main.css: 	The particular project styles. It is generated from main.scss.
+    * main.scss:  A Sass file corresponding to the main.css
+  * img/:   A directory for used images.
   * js/
-  	* main.js: 		jquery actions for selecting and unselecting the stars for the book rating.
+    * attachments.js: Functions for handling images attachments for the posted messages.
+  	* main.js: Main js file containing functions for handeling: general porpuse actions, users, channels display, posts display, user interface events and ioSockets events responses.
   * templates/
-  	* books.html: 	the home page where books can be searched and listed.  	
-  	* booktab.html: the page where a single booktab is showed, including book info, gooreadings rating and user reviews and ratings.
-  	* http_error403.html: error page for 403 error (Forbiden)
-  	* http_error404.html: error page for 404 error (Page Not Found)
-  	* layout.html: 	root template from which the others inherit. 
-  	* login.html: 	login page, for capturing user an d password.
-  	* registration.html: page where a new user can give info for registering name, email, username and password.
-* .gitignore: 		Git file for ignoring other files.
-* application.py: 	the main program file where all the Flask routes and python processes are developed.
-* security.py: 		passlib functions for crypting and checking encrypted password (encrypt_password, check_encrypted_password). The password must be cypted before being saved to database; and password given by an user must be check against the crypted password in the database, before being granted acccess.
-* README.md: 		this file.
-* requirements.txt: all the packages that must be installed before running this project. Use: pip -install requirements.txt
-
-
+    * http_error404.html: error page for 404 error (Page Not Found)
+    * layout.html: root template from which the others inherit.
+  	* index.html:  main page for the chat rooms.
+    * test.html: Just a file for testing.
+* .gitignore: file for telling git to igonore some files.
+* application.py: the main program containing the main Flask route (/), and all the socketio event handlers. It also contains the classes for storing Users of chat rooms, Channels and Posts per Channel.  
+* README.md: This file.
+* requirements.txt: All the packages that must be installed before running this project. Use: pip -install requirements.txt
