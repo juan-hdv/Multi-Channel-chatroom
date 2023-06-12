@@ -1,4 +1,4 @@
-# PROJECT 2: Flack - JavaScript and Frontends
+# CS50-PROJECT 2: Flack - Multi channel chatroom
 
 ### Author/Date
 
