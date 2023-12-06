@@ -109,22 +109,22 @@ class channelsClass ():
 
     # Add a new channel with name cName and a new (empty) posts list
     # @param {string} cName - The channel name
-    def add (self,cName):
-    	self.dict[cName] = postsClass () 
+    def add(self, cName):
+        self.dict[cName] = postsClass()
 
     # Delete a channel with name cName
     # @param {string} cName - The channel name
-    def delete (self,cName):
-    	del self.dict[cName]
+    def delete(self, cName):
+        del self.dict[cName]
 
     # True if cName exists in the channels list, otherwise false
     # @param {string} cName - The channel name
-    def exists (self,cName):
-    	return self.dict.get(cName) != None
+    def exists(self, cName):
+        return self.dict.get(cName) is not None
 
-    # Return and ordered lists of channels
+    # Return an ordered list of channels
     def toList(self):
-    	return sorted (list(self.dict.keys()))
+        return sorted(list(self.dict.keys()))
 
     # Add a new msg (post) to the channel cName from username 
     # @param {string} cName - The channel name
