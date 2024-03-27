@@ -1,4 +1,4 @@
-# CS50-PROJECT 2: Flack - Multi channel chatroom
+# CS50-PROJECT 2: Flask - Multi channel chatroom
 
 ### Author/Date
 
